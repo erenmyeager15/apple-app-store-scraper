@@ -1,0 +1,55 @@
+{
+  "title": "Apple App Store Scraper",
+  "description": "Search the Apple App Store or look up apps by ID to extract app details, ratings, prices, and metadata. No login or API key required.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "searchTerms": {
+      "title": "Search Terms",
+      "description": "Keywords to search the App Store, e.g. \"weather\", \"photo editor\".",
+      "type": "array",
+      "editor": "stringList",
+      "prefill": ["weather"],
+      "default": ["weather"]
+    },
+    "appIds": {
+      "title": "App IDs",
+      "description": "Specific App Store app IDs to look up (the numeric trackId, e.g. 284882215). Comma lists are batched.",
+      "type": "array",
+      "editor": "stringList",
+      "default": []
+    },
+    "entity": {
+      "title": "App Type",
+      "description": "Which kind of apps to return.",
+      "type": "string",
+      "editor": "select",
+      "default": "software",
+      "enum": ["software", "iPadSoftware", "macSoftware"],
+      "enumTitles": ["iPhone Apps", "iPad Apps", "Mac Apps"]
+    },
+    "country": {
+      "title": "Country / Storefront",
+      "description": "Two-letter App Store country code (e.g. \"us\", \"gb\", \"in\").",
+      "type": "string",
+      "editor": "textfield",
+      "default": "us"
+    },
+    "maxResultsPerTerm": {
+      "title": "Max Results Per Search Term",
+      "description": "Maximum apps to return per search term (App Store API caps at 200).",
+      "type": "integer",
+      "editor": "number",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 200
+    },
+    "proxyConfiguration": {
+      "title": "Proxy Configuration",
+      "description": "Proxy settings. The iTunes API is generally open; enable proxies to avoid rate limits on large runs.",
+      "type": "object",
+      "editor": "proxy",
+      "default": { "useApifyProxy": true }
+    }
+  }
+}
