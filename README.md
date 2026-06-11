@@ -84,6 +84,14 @@ You are only charged for apps actually returned. Apify platform usage is billed 
 - **Market research** - analyze genres, pricing models, and developer portfolios
 - **App intelligence** - build datasets across categories and storefronts
 
+## How to Scrape the Apple App Store (Step by Step)
+
+1. Click **Try for free** / **Run**.
+2. Enter keywords in `searchTerms` (e.g. `photo editor`) or specific numeric app IDs in `appIds`.
+3. Choose the `entity` (iPhone, iPad, or Mac apps) and the `country` storefront.
+4. Set `maxResultsPerTerm` (start small to test; the App Store caps at 200).
+5. Run the Actor, then export results as JSON, CSV, Excel, or HTML, or pull them via the Apify API.
+
 ## Tips
 
 - App IDs are the numeric `id` in an App Store URL (e.g. `id284882215`).
