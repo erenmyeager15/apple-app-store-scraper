@@ -1,0 +1,14 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Apple App Store Scraper Output",
+  "description": "Structured Apple App Store app records with app IDs, names, developers, genres, prices, ratings, versions, bundle IDs, App Store URLs, icons, countries, and scraped timestamps.",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "string",
+      "title": "Apple App Store app records",
+      "description": "Clean dataset items containing Apple App Store app metadata, ratings, prices, and listing URLs.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}
