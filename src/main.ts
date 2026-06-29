@@ -27,7 +27,7 @@ if (terms.length === 0 && ids.length === 0) {
 
 log.info(`Starting Apple App Store scrape: ${terms.length} search term(s), ${ids.length} app id(s) | country=${ctry}`);
 
-const proxyConfiguration = await Actor.createProxyConfiguration(proxyInput ?? { useApifyProxy: true });
+const proxyConfiguration = await Actor.createProxyConfiguration(proxyInput ?? { useApifyProxy: false });
 
 const startRequests = [
     ...terms.map((term) => ({

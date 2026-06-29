@@ -55,8 +55,22 @@ function mapApp(a: any, country: string): AppRecord {
 }
 
 export function buildRouter(opts: { country: string }) {
+    let spendingLimitReached = false;
+    let chargedAppCount = 0;
+    const seenAppKeys = new Set<string>();
+
+    const appKey = (record: AppRecord): string | null => {
+        if (record.appId != null) return `id:${record.appId}`;
+        if (record.bundleId) return `bundle:${record.bundleId.toLowerCase()}`;
+        if (record.appStoreUrl) return `url:${record.appStoreUrl.toLowerCase()}`;
+        return null;
+    };
+
     return async (ctx: HttpCrawlingContext): Promise<void> => {
-        const { request } = ctx;
+        const { request, crawler } = ctx;
+
+        if (spendingLimitReached) return;
+
         const data = parseBody(ctx);
         const source = (request.userData.source as string) ?? 'apple';
         const results: any[] = Array.isArray(data?.results) ? data.results : [];
@@ -65,11 +79,35 @@ export function buildRouter(opts: { country: string }) {
         const apps = results.filter((r) => r && (r.wrapperType === 'software' || r.kind === 'software' || r.trackId));
 
         let pushed = 0;
+        let skippedDuplicates = 0;
         for (const a of apps) {
-            await Actor.pushData(mapApp(a, opts.country));
-            await Actor.charge({ eventName: 'app-scraped' }).catch(() => null);
-            pushed++;
+            if (spendingLimitReached) break;
+
+            const record = mapApp(a, opts.country);
+            const key = appKey(record);
+            if (key && seenAppKeys.has(key)) {
+                skippedDuplicates += 1;
+                continue;
+            }
+
+            // Push and charge atomically so unpaid apps are never written and
+            // billing failures stop the run instead of being ignored.
+            const chargeResult = await Actor.pushData(record, 'app-scraped');
+            const recordWasSaved = chargeResult.chargedCount > 0 || !chargeResult.eventChargeLimitReached;
+            if (recordWasSaved) {
+                if (key) seenAppKeys.add(key);
+                pushed += 1;
+                chargedAppCount += 1;
+            }
+
+            if (chargeResult.eventChargeLimitReached) {
+                spendingLimitReached = true;
+                await Actor.setStatusMessage(`Stopped at the user's spending limit after ${chargedAppCount} apps`);
+                log.warning('User spending limit reached; stopping before more App Store requests.');
+                await crawler.autoscaledPool?.abort();
+                break;
+            }
         }
-        log.info(`${source}: pushed ${pushed} apps`);
+        log.info(`${source}: pushed ${pushed} apps`, { skippedDuplicates });
     };
 }

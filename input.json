@@ -1,0 +1,10 @@
+{
+  "searchTerms": [],
+  "appIds": ["6448311069"],
+  "entity": "software",
+  "country": "us",
+  "maxResultsPerTerm": 1,
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
+}
