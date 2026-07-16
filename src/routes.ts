@@ -1,113 +1,97 @@
-import { Actor, log } from 'apify';
-import type { HttpCrawlingContext } from 'crawlee';
 import type { AppRecord } from './types.js';
 
-const num = (v: unknown): number | null => {
-    if (typeof v === 'number' && Number.isFinite(v)) return v;
-    if (typeof v === 'string' && v.trim() !== '') {
-        const n = parseFloat(v);
-        return Number.isFinite(n) ? n : null;
+function objectValue(value: unknown): Record<string, unknown> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+        ? value as Record<string, unknown>
+        : {};
+}
+
+function text(value: unknown, maximum = 1_000): string | null {
+    if (typeof value !== 'string') return null;
+    const normalized = value.replace(/\s+/g, ' ').trim();
+    return normalized ? normalized.slice(0, maximum) : null;
+}
+
+function numberValue(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string' && value.trim()) {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : null;
     }
     return null;
-};
-
-function parseBody(ctx: HttpCrawlingContext): any {
-    const anyCtx = ctx as any;
-    if (anyCtx.json !== undefined && anyCtx.json !== null) return anyCtx.json;
-    const raw = ctx.body?.toString?.() ?? '';
-    const t = raw.trim();
-    if (!t.startsWith('{') && !t.startsWith('[')) throw new Error('Non-JSON response (blocked/rate-limited). Rotating session.');
-    return JSON.parse(t);
 }
 
-function mapApp(a: any, country: string): AppRecord {
+function integerValue(value: unknown): number | null {
+    const number = numberValue(value);
+    return number !== null && Number.isSafeInteger(number) ? number : null;
+}
+
+function numericIdValue(value: unknown): string | null {
+    if (typeof value === 'number' && Number.isSafeInteger(value) && value > 0) return String(value);
+    if (typeof value === 'string' && /^[1-9]\d{0,19}$/.test(value.trim())) return value.trim();
+    return null;
+}
+
+function appIdValue(value: unknown): string | null {
+    const id = numericIdValue(value);
+    return id && /^[1-9]\d{5,19}$/.test(id) ? id : null;
+}
+
+function textArray(value: unknown, maximumItems = 50): string[] {
+    if (!Array.isArray(value)) return [];
+    return [...new Set(value
+        .map((item) => text(item, 300))
+        .filter((item): item is string => item !== null))].slice(0, maximumItems);
+}
+
+function idArray(value: unknown, maximumItems = 50): string[] {
+    if (!Array.isArray(value)) return [];
+    return [...new Set(value
+        .map(numericIdValue)
+        .filter((item): item is string => item !== null))].slice(0, maximumItems);
+}
+
+function isoTimestamp(value: unknown): string | null {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    const timestamp = Date.parse(value);
+    return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null;
+}
+
+export function rawAppId(value: unknown): string | null {
+    return appIdValue(objectValue(value).trackId);
+}
+
+export function mapApp(value: unknown, country: string): AppRecord {
+    const app = objectValue(value);
+    const price = numberValue(app.price);
     return {
-        appId: num(a.trackId),
-        appName: a.trackName ?? null,
-        bundleId: a.bundleId ?? null,
-        developer: a.sellerName ?? a.artistName ?? null,
-        developerId: num(a.artistId),
-        developerUrl: a.artistViewUrl ?? null,
-        price: num(a.price),
-        formattedPrice: a.formattedPrice ?? null,
-        currency: a.currency ?? null,
-        rating: num(a.averageUserRating),
-        ratingCount: num(a.userRatingCount),
-        ratingCurrentVersion: num(a.averageUserRatingForCurrentVersion),
-        ratingCountCurrentVersion: num(a.userRatingCountForCurrentVersion),
-        primaryGenre: a.primaryGenreName ?? null,
-        genres: Array.isArray(a.genres) ? a.genres : [],
-        contentRating: a.contentAdvisoryRating ?? a.trackContentRating ?? null,
-        version: a.version ?? null,
-        minimumOsVersion: a.minimumOsVersion ?? null,
-        fileSizeBytes: num(a.fileSizeBytes),
-        appStoreUrl: a.trackViewUrl ?? null,
-        artworkUrl: a.artworkUrl512 ?? a.artworkUrl100 ?? a.artworkUrl60 ?? null,
-        screenshotUrls: Array.isArray(a.screenshotUrls) ? a.screenshotUrls : [],
-        languages: Array.isArray(a.languageCodesISO2A) ? a.languageCodesISO2A : [],
-        description: a.description ?? null,
-        releaseDate: a.releaseDate ?? null,
-        currentVersionReleaseDate: a.currentVersionReleaseDate ?? null,
-        releaseNotes: a.releaseNotes ?? null,
+        source: 'apple_app_store',
+        recordType: 'app',
+        appId: appIdValue(app.trackId) ?? '',
+        appName: text(app.trackName, 300) ?? '',
+        bundleId: text(app.bundleId, 300) ?? '',
+        developer: text(app.sellerName ?? app.artistName, 300) ?? '',
+        developerId: numericIdValue(app.artistId),
+        primaryGenre: text(app.primaryGenreName, 300),
+        primaryGenreId: numericIdValue(app.primaryGenreId),
+        genres: textArray(app.genres),
+        genreIds: idArray(app.genreIds),
+        price,
+        priceText: text(app.formattedPrice, 100),
+        currency: text(app.currency, 20)?.toUpperCase() ?? null,
+        isFree: price === null ? null : price === 0,
+        rating: numberValue(app.averageUserRating),
+        ratingCount: integerValue(app.userRatingCount),
+        ratingCurrentVersion: numberValue(app.averageUserRatingForCurrentVersion),
+        ratingCountCurrentVersion: integerValue(app.userRatingCountForCurrentVersion),
+        contentRating: text(app.contentAdvisoryRating ?? app.trackContentRating, 100),
+        version: text(app.version, 100),
+        minimumOsVersion: text(app.minimumOsVersion, 100),
+        fileSizeBytes: integerValue(app.fileSizeBytes),
+        releaseDate: isoTimestamp(app.releaseDate),
+        currentVersionReleaseDate: isoTimestamp(app.currentVersionReleaseDate),
+        appStoreUrl: text(app.trackViewUrl, 2_000) ?? '',
         country,
         scrapedAt: new Date().toISOString(),
-    };
-}
-
-export function buildRouter(opts: { country: string }) {
-    let spendingLimitReached = false;
-    let chargedAppCount = 0;
-    const seenAppKeys = new Set<string>();
-
-    const appKey = (record: AppRecord): string | null => {
-        if (record.appId != null) return `id:${record.appId}`;
-        if (record.bundleId) return `bundle:${record.bundleId.toLowerCase()}`;
-        if (record.appStoreUrl) return `url:${record.appStoreUrl.toLowerCase()}`;
-        return null;
-    };
-
-    return async (ctx: HttpCrawlingContext): Promise<void> => {
-        const { request, crawler } = ctx;
-
-        if (spendingLimitReached) return;
-
-        const data = parseBody(ctx);
-        const source = (request.userData.source as string) ?? 'apple';
-        const results: any[] = Array.isArray(data?.results) ? data.results : [];
-
-        // lookup responses include non-software wrappers occasionally; keep app/software entries.
-        const apps = results.filter((r) => r && (r.wrapperType === 'software' || r.kind === 'software' || r.trackId));
-
-        let pushed = 0;
-        let skippedDuplicates = 0;
-        for (const a of apps) {
-            if (spendingLimitReached) break;
-
-            const record = mapApp(a, opts.country);
-            const key = appKey(record);
-            if (key && seenAppKeys.has(key)) {
-                skippedDuplicates += 1;
-                continue;
-            }
-
-            // Push and charge atomically so unpaid apps are never written and
-            // billing failures stop the run instead of being ignored.
-            const chargeResult = await Actor.pushData(record, 'app-scraped');
-            const recordWasSaved = chargeResult.chargedCount > 0 || !chargeResult.eventChargeLimitReached;
-            if (recordWasSaved) {
-                if (key) seenAppKeys.add(key);
-                pushed += 1;
-                chargedAppCount += 1;
-            }
-
-            if (chargeResult.eventChargeLimitReached) {
-                spendingLimitReached = true;
-                await Actor.setStatusMessage(`Stopped at the user's spending limit after ${chargedAppCount} apps`);
-                log.warning('User spending limit reached; stopping before more App Store requests.');
-                await crawler.autoscaledPool?.abort();
-                break;
-            }
-        }
-        log.info(`${source}: pushed ${pushed} apps`, { skippedDuplicates });
     };
 }

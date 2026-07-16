@@ -1,15 +1,17 @@
 {
   "name": "apple-app-store-scraper",
   "version": "1.0.0",
-  "description": "Apify Actor that scrapes app data from the Apple App Store via the public iTunes Search API",
+  "description": "Apify Actor for direct Apple App Store app metadata and aggregate rating lookups",
   "type": "module",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
     "build": "tsc",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "npm run build && node --test tests/api.test.mjs tests/input.test.mjs tests/routes.test.mjs tests/status.test.mjs tests/validation.test.mjs tests/metadata.test.mjs",
+    "test:source": "npm run build && node scripts/direct-source-check.mjs"
   },
-  "keywords": ["apify", "apple", "app-store", "itunes", "apps", "scraper", "crawlee"],
+  "keywords": ["apify", "apple", "app-store", "itunes", "apps", "metadata", "ratings"],
   "license": "Apache-2.0",
   "dependencies": {
     "apify": "^3.2.0",

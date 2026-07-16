@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "apple-app-store-scraper",
-  "title": "Apple App Store Scraper - Apps, Ratings & Prices",
-  "description": "Scrape Apple App Store apps by search term or app ID. Extract names, developers, ratings, prices, genres, versions, screenshots, and descriptions. No login or API key needed.",
+  "title": "Apple App Store Metadata & Ratings Scraper",
+  "description": "Look up factual public Apple App Store metadata by app ID: developer, category, aggregate ratings, price, version, requirements, release dates, and official URL.",
   "version": "1.0",
   "categories": ["BUSINESS", "DEVELOPER_TOOLS", "ECOMMERCE"],
   "dockerfile": "Dockerfile",
@@ -10,40 +10,11 @@
   "readme": "../README.md",
   "output": "./output_schema.json",
   "storages": {
-    "dataset": {
-      "actorSpecification": 1,
-      "views": {
-        "apps": {
-          "title": "Apps",
-          "transformation": {
-            "fields": ["appId", "appName", "developer", "primaryGenre", "price", "formattedPrice", "currency", "rating", "ratingCount", "version", "contentRating", "minimumOsVersion", "bundleId", "appStoreUrl", "artworkUrl", "currentVersionReleaseDate", "country", "scrapedAt"]
-          },
-          "display": {
-            "component": "table",
-            "properties": {
-              "appId": { "label": "App ID", "format": "text" },
-              "appName": { "label": "Name", "format": "text" },
-              "developer": { "label": "Developer", "format": "text" },
-              "primaryGenre": { "label": "Genre", "format": "text" },
-              "price": { "label": "Price", "format": "number" },
-              "formattedPrice": { "label": "Price (text)", "format": "text" },
-              "currency": { "label": "Currency", "format": "text" },
-              "rating": { "label": "Rating", "format": "number" },
-              "ratingCount": { "label": "Ratings", "format": "number" },
-              "version": { "label": "Version", "format": "text" },
-              "contentRating": { "label": "Content Rating", "format": "text" },
-              "minimumOsVersion": { "label": "Min OS", "format": "text" },
-              "bundleId": { "label": "Bundle ID", "format": "text" },
-              "appStoreUrl": { "label": "App Store URL", "format": "link" },
-              "artworkUrl": { "label": "Icon", "format": "image" },
-              "currentVersionReleaseDate": { "label": "Updated", "format": "date" },
-              "country": { "label": "Country", "format": "text" },
-              "scrapedAt": { "label": "Scraped At", "format": "text" }
-            }
-          }
-        }
-      }
-    }
+    "dataset": "./dataset_schema.json"
+  },
+  "exampleRunInput": {
+    "body": "{\"appIds\":[\"6448311069\"],\"maxResults\":1,\"country\":\"us\",\"proxyConfiguration\":{\"useApifyProxy\":false}}",
+    "contentType": "application/json; charset=utf-8"
   },
   "pricingInfo": {
     "pricingModel": "PAY_PER_EVENT",
@@ -51,7 +22,7 @@
       "actorChargeEvents": {
         "app-scraped": {
           "eventTitle": "App Scraped",
-          "eventDescription": "Charged for each App Store app extracted and saved to the dataset.",
+          "eventDescription": "Charged for each validated Apple App Store metadata record saved to the dataset.",
           "eventPriceUsd": 0.002,
           "isPrimaryEvent": true,
           "isOneTimeEvent": false
@@ -69,8 +40,8 @@
   "defaultRunOptions": {
     "build": "latest",
     "memoryMbytes": 512,
-    "timeoutSecs": 3600
+    "timeoutSecs": 1800
   },
   "minMemoryMbytes": 256,
-  "maxMemoryMbytes": 4096
+  "maxMemoryMbytes": 512
 }

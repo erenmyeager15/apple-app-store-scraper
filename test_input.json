@@ -1,8 +1,8 @@
 {
-  "searchTerms": ["weather"],
-  "appIds": ["284882215"],
-  "entity": "software",
+  "appIds": ["6448311069"],
+  "maxResults": 1,
   "country": "us",
-  "maxResultsPerTerm": 3,
-  "proxyConfiguration": { "useApifyProxy": true }
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
 }

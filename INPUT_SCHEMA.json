@@ -1,53 +1,47 @@
 {
-  "title": "Apple App Store Scraper",
-  "description": "Search the Apple App Store or look up apps by ID to extract app details, ratings, prices, and metadata. No login or API key required.",
+  "title": "Apple App Store Metadata & Ratings Scraper",
+  "description": "Look up factual public app metadata and aggregate ratings using numeric Apple App Store IDs or official app URLs.",
   "type": "object",
   "schemaVersion": 1,
+  "additionalProperties": false,
   "properties": {
-    "searchTerms": {
-      "title": "Search Terms",
-      "description": "Keywords to search the App Store, e.g. \"weather\", \"photo editor\".",
-      "type": "array",
-      "editor": "stringList",
-      "prefill": ["chatgpt"],
-      "default": []
-    },
     "appIds": {
-      "title": "App IDs",
-      "description": "Specific App Store app IDs to look up (the numeric trackId, e.g. 284882215). Comma lists are batched.",
+      "title": "App IDs or URLs",
+      "description": "Up to 50 numeric App Store IDs, such as 6448311069, or official https://apps.apple.com/.../idAPP_ID URLs.",
       "type": "array",
       "editor": "stringList",
+      "minItems": 1,
+      "maxItems": 50,
       "prefill": ["6448311069"],
-      "default": ["6448311069"]
+      "default": ["6448311069"],
+      "items": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 500
+      }
     },
-    "entity": {
-      "title": "App Type",
-      "description": "Which kind of apps to return.",
-      "type": "string",
-      "editor": "select",
-      "default": "software",
-      "enum": ["software", "iPadSoftware", "macSoftware"],
-      "enumTitles": ["iPhone Apps", "iPad Apps", "Mac Apps"]
-    },
-    "country": {
-      "title": "Country / Storefront",
-      "description": "Two-letter App Store country code (e.g. \"us\", \"gb\", \"in\").",
-      "type": "string",
-      "editor": "textfield",
-      "default": "us"
-    },
-    "maxResultsPerTerm": {
-      "title": "Max Results Per Search Term",
-      "description": "Maximum apps to return per search term. Use 1-5 for a quick test. The App Store API caps search at 200.",
+    "maxResults": {
+      "title": "Maximum apps",
+      "description": "Maximum number of unique app IDs to process. Start with 1 for a quick test.",
       "type": "integer",
       "editor": "number",
       "default": 1,
       "minimum": 1,
-      "maximum": 200
+      "maximum": 50
+    },
+    "country": {
+      "title": "Storefront country",
+      "description": "Two-letter Apple storefront country code, such as us, gb, or in.",
+      "type": "string",
+      "editor": "textfield",
+      "default": "us",
+      "minLength": 2,
+      "maxLength": 2,
+      "pattern": "^[A-Za-z]{2}$"
     },
     "proxyConfiguration": {
-      "title": "Proxy Configuration",
-      "description": "Proxy settings. The iTunes API is generally open; enable proxies to avoid rate limits on large runs.",
+      "title": "Proxy configuration",
+      "description": "Optional proxy settings for official API lookups. The default quick test does not use a proxy.",
       "type": "object",
       "editor": "proxy",
       "default": { "useApifyProxy": false }

@@ -1,0 +1,78 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "source": { "type": "string", "const": "apple_app_store" },
+      "recordType": { "type": "string", "const": "app" },
+      "appId": { "type": "string" },
+      "appName": { "type": "string" },
+      "bundleId": { "type": "string" },
+      "developer": { "type": "string" },
+      "developerId": { "type": ["string", "null"] },
+      "primaryGenre": { "type": ["string", "null"] },
+      "primaryGenreId": { "type": ["string", "null"] },
+      "genres": { "type": "array", "items": { "type": "string" } },
+      "genreIds": { "type": "array", "items": { "type": "string" } },
+      "price": { "type": ["number", "null"] },
+      "priceText": { "type": ["string", "null"] },
+      "currency": { "type": ["string", "null"] },
+      "isFree": { "type": ["boolean", "null"] },
+      "rating": { "type": ["number", "null"] },
+      "ratingCount": { "type": ["integer", "null"] },
+      "ratingCurrentVersion": { "type": ["number", "null"] },
+      "ratingCountCurrentVersion": { "type": ["integer", "null"] },
+      "contentRating": { "type": ["string", "null"] },
+      "version": { "type": ["string", "null"] },
+      "minimumOsVersion": { "type": ["string", "null"] },
+      "fileSizeBytes": { "type": ["integer", "null"] },
+      "releaseDate": { "type": ["string", "null"] },
+      "currentVersionReleaseDate": { "type": ["string", "null"] },
+      "appStoreUrl": { "type": "string" },
+      "country": { "type": "string" },
+      "scrapedAt": { "type": "string" }
+    },
+    "required": [
+      "source", "recordType", "appId", "appName", "bundleId", "developer",
+      "developerId", "primaryGenre", "primaryGenreId", "genres", "genreIds",
+      "price", "priceText", "currency", "isFree", "rating", "ratingCount",
+      "ratingCurrentVersion", "ratingCountCurrentVersion", "contentRating",
+      "version", "minimumOsVersion", "fileSizeBytes", "releaseDate",
+      "currentVersionReleaseDate", "appStoreUrl", "country", "scrapedAt"
+    ]
+  },
+  "views": {
+    "apps": {
+      "title": "Apps",
+      "transformation": {
+        "fields": [
+          "appId", "appName", "developer", "bundleId", "primaryGenre", "rating",
+          "ratingCount", "priceText", "isFree", "version", "minimumOsVersion",
+          "currentVersionReleaseDate", "appStoreUrl", "country", "scrapedAt"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "appId": { "label": "App ID", "format": "text" },
+          "appName": { "label": "App", "format": "text" },
+          "developer": { "label": "Developer", "format": "text" },
+          "bundleId": { "label": "Bundle ID", "format": "text" },
+          "primaryGenre": { "label": "Genre", "format": "text" },
+          "rating": { "label": "Rating", "format": "number" },
+          "ratingCount": { "label": "Ratings", "format": "number" },
+          "priceText": { "label": "Price", "format": "text" },
+          "isFree": { "label": "Free", "format": "boolean" },
+          "version": { "label": "Version", "format": "text" },
+          "minimumOsVersion": { "label": "Minimum OS", "format": "text" },
+          "currentVersionReleaseDate": { "label": "Updated", "format": "date" },
+          "appStoreUrl": { "label": "App Store URL", "format": "link" },
+          "country": { "label": "Country", "format": "text" },
+          "scrapedAt": { "label": "Scraped At", "format": "date" }
+        }
+      }
+    }
+  }
+}

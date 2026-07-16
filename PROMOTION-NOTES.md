@@ -1,55 +1,36 @@
-# Apple App Store Scraper Promotion Notes
+# Apple App Store Metadata & Ratings Scraper Promotion Notes
 
 ## Positioning
 
-Promote this as a public Apple App Store metadata scraper using Apple's iTunes Search API.
+Promote this as a direct app-ID metadata lookup tool using Apple's documented iTunes Search API. Keep claims factual and non-affiliated.
 
-Best-fit buyers:
+Best-fit users:
 
-- ASO teams.
-- App-market researchers.
-- Product and competitive intelligence teams.
-- Analysts comparing iOS apps across storefronts.
+- ASO and app-market analysts with known app IDs.
+- Product teams monitoring versions, prices, and aggregate ratings.
+- Researchers comparing the same app across country storefronts.
+- Data workflows that need stable identifiers and official listing URLs.
 
-Avoid claiming private user data, review scraping, or hidden App Store access.
+Do not advertise keyword discovery, review collection, descriptions, release notes, icons, screenshots, private data, or hidden App Store access.
 
-## Short Video Ideas
-
-1. "Export Apple App Store metadata to CSV with Apify"
-2. "Look up iOS app ratings and prices by App Store ID"
-3. "Compare Apple App Store apps across country storefronts"
-
-## Suggested Demo Flow
+## Demo Flow
 
 1. Open the Actor.
-2. Use App Store ID `6448311069`.
-3. Keep `country: us` and `maxResultsPerTerm: 1`.
+2. Enter `6448311069` or its official App Store URL.
+3. Keep `country: us`, `maxResults: 1`, and proxy disabled.
 4. Run the Actor.
-5. Show rating, price, version, genre, and App Store URL.
-6. Mention direct app ID lookup is best for exact apps.
+5. Show the validated app identity, aggregate rating, price, version, dates, and official URL.
+6. Show `RUN_STATUS` for machine-readable completion details.
 
 ## SEO Keywords
 
-- Apple App Store scraper
-- iTunes Search API scraper
-- iOS app metadata scraper
-- App Store ratings scraper
-- App Store to CSV
-- app store optimization data
+- Apple App Store metadata API
+- iOS app ratings data
+- App Store app ID lookup
+- iOS app price tracker data
+- App Store metadata to CSV
+- Apple storefront app data
 
-## Short Social Copy
+## Short Copy
 
-Built an Apple App Store Scraper for Apify.
-
-Input:
-- search terms
-- numeric app IDs
-- country storefront
-- app type
-
-Output:
-- app name and developer
-- rating and rating count
-- price and currency
-- genre and version
-- App Store URL
+Look up validated Apple App Store metadata by numeric app ID or official URL. Export developer, genre, aggregate ratings, price, version, requirements, dates, and official listing links to CSV, JSON, Excel, or an API workflow.

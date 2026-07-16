@@ -1,14 +1,20 @@
 {
   "actorOutputSchemaVersion": 1,
-  "title": "Apple App Store Scraper Output",
-  "description": "Structured Apple App Store app records with app IDs, names, developers, genres, prices, ratings, versions, bundle IDs, App Store URLs, icons, countries, and scraped timestamps.",
+  "title": "Apple App Store Metadata Output",
+  "description": "Validated factual Apple App Store metadata and aggregate rating metrics from direct app-ID lookups.",
   "type": "object",
   "properties": {
     "results": {
       "type": "string",
-      "title": "Apple App Store app records",
-      "description": "Clean dataset items containing Apple App Store app metadata, ratings, prices, and listing URLs.",
+      "title": "Apple App Store records",
+      "description": "Dataset items containing factual app metadata, aggregate ratings, price, version, dates, and the official App Store URL.",
       "template": "{{links.apiDefaultDatasetUrl}}/items"
+    },
+    "runStatus": {
+      "type": "string",
+      "title": "Run diagnostics",
+      "description": "Machine-readable run outcome, counters, and bounded diagnostics.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_STATUS"
     }
   }
 }
