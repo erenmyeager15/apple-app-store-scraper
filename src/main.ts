@@ -1,5 +1,5 @@
 import { Actor, log } from 'apify';
-import { HttpCrawler } from 'crawlee';
+import { HttpCrawler } from '@crawlee/http';
 import { buildLookupUrl, parseLookupPayload, splitIntoBatches } from './api.js';
 import { normalizeInput } from './input.js';
 import { mapApp, rawAppId } from './routes.js';
