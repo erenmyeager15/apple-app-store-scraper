@@ -5,6 +5,7 @@
   "description": "Look up factual public Apple App Store metadata by app ID: developer, category, aggregate ratings, price, version, requirements, release dates, and official URL.",
   "version": "1.0",
   "categories": ["BUSINESS", "DEVELOPER_TOOLS", "ECOMMERCE"],
+  "categoriesVersion": "1.0.0",
   "dockerfile": "Dockerfile",
   "input": "../INPUT_SCHEMA.json",
   "readme": "../README.md",

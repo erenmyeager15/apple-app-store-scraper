@@ -50,6 +50,50 @@ Each charged dataset row is validated against a fixed factual-data contract:
 
 The `RUN_STATUS` key-value-store record contains the final outcome, counters, spending-limit state, and at most 20 bounded diagnostics. Outcomes are `succeeded`, `partial`, `empty`, `failed`, or `stopped_spending_limit`.
 
+## Verified Sample Output
+
+This record came from Apple's public lookup API for ChatGPT on August 2, 2026. Store values can change after collection.
+
+```json
+{
+  "source": "apple_app_store",
+  "recordType": "app",
+  "appId": "6448311069",
+  "appName": "ChatGPT",
+  "bundleId": "com.openai.chat",
+  "developer": "OpenAI OpCo, LLC",
+  "developerId": "1684349733",
+  "primaryGenre": "Productivity",
+  "primaryGenreId": "6007",
+  "genres": ["Productivity", "Utilities"],
+  "genreIds": ["6007", "6002"],
+  "price": 0,
+  "priceText": "Free",
+  "currency": "USD",
+  "isFree": true,
+  "rating": 4.83068,
+  "ratingCount": 9028052,
+  "contentRating": "12+",
+  "version": "1.2026.202",
+  "minimumOsVersion": "17.0",
+  "fileSizeBytes": 205886464,
+  "releaseDate": "2023-05-18T07:00:00.000Z",
+  "currentVersionReleaseDate": "2026-07-27T16:41:51.000Z",
+  "appStoreUrl": "https://apps.apple.com/us/app/chatgpt/id6448311069?uo=4",
+  "country": "us",
+  "scrapedAt": "2026-08-01T21:14:57.134Z"
+}
+```
+
+## Pricing
+
+| Event | Price |
+| --- | ---: |
+| `app-scraped` | `$0.002` per validated app row |
+| `apify-actor-start` | `$0.00005` per GB, minimum one event |
+
+Apify Console shows the authoritative current price. Each validated record is saved and charged atomically.
+
 ## Reliability And Cost Controls
 
 - Maximum 50 unique apps per run
