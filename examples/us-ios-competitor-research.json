@@ -1,0 +1,8 @@
+{
+  "appIds": ["1232780281", "281796108", "410395246"],
+  "maxResults": 3,
+  "country": "us",
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
+}

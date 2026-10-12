@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "apple-app-store-scraper",
-  "title": "Apple App Store Metadata & Ratings Scraper",
-  "description": "Look up factual public Apple App Store metadata by app ID: developer, category, aggregate ratings, price, version, requirements, release dates, and official URL.",
+  "title": "Apple App Store Scraper - Ratings, Prices & Versions",
+  "description": "Compare iOS competitors for US app agencies: aggregate ratings, rating counts, versions, release dates, developer details and download prices. Look up known app IDs or official URLs in the US storefront and export CSV for client research. No API key required.",
   "version": "1.0",
   "categories": ["BUSINESS", "DEVELOPER_TOOLS", "ECOMMERCE"],
   "categoriesVersion": "1.0.0",

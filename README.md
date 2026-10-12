@@ -1,8 +1,52 @@
-# Apple App Store Metadata & Ratings Scraper
+# Apple App Store Scraper - Ratings, Prices & Versions
 
-Look up factual public Apple App Store metadata by numeric app ID or official App Store URL. The Actor uses Apple's documented iTunes Search API lookup endpoint and returns validated app identity, developer, category, aggregate ratings, price, version, compatibility, dates, and the official listing URL.
+Build an iOS competitor snapshot for US app agencies, ASO consultants and product teams. Compare known apps by aggregate ratings, rating counts, versions, release dates and download prices, then export CSV for a client brief or your own spreadsheet comparison.
+
+Enter numeric app IDs or official App Store URLs and choose a storefront. The Actor uses Apple's documented iTunes Search API lookup endpoint and returns validated factual metadata, stable identifiers and official listing links. No Apple API key or login is required; the US starter uses no proxy.
+
+## US app agency workflows
+
+| Research question | Fields to compare | Client deliverable |
+| --- | --- | --- |
+| How do known competitors compare in the US storefront? | `rating`, `ratingCount`, `developer`, `primaryGenre` | A dated competitor table with official listing links |
+| Which competitors released a new version? | `version`, `currentVersionReleaseDate`, `minimumOsVersion` | A release comparison between two saved snapshots |
+| Did the listed download price change? | `price`, `currency`, `isFree` | Same-storefront price changes with collection dates |
+| Which apps need deeper research? | `appId`, `bundleId`, `appStoreUrl` | A traceable shortlist for a client review |
+
+Ratings are aggregate storefront observations. They do not describe a US audience demographic or reveal downloads, revenue or active users. Listed download prices exclude subscriptions and in-app purchases.
 
 This version deliberately supports direct app lookups only. It does not perform keyword discovery, scrape App Store pages, collect reviews, or export descriptions, release notes, icons, screenshots, or other promotional assets.
+
+## Three-app US competitor-research starter
+
+Start with Notion, Evernote and Microsoft OneNote in the US storefront. They are illustrative productivity competitors, not a ranking or endorsement. Replace their IDs with your client's app and two known competitors.
+
+[Open US iOS App Competitor Research](https://apify.com/fascinating_lentil/apple-app-store-scraper/examples/us-ios-competitor-research)
+
+```json
+{
+  "appIds": ["1232780281", "281796108", "410395246"],
+  "maxResults": 3,
+  "country": "us",
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
+}
+```
+
+This saved configuration has been checked against the existing input contract and official US listing URLs. It has not been run as a new cloud test. Set `maxResults` to the number of unique apps you want to process: the Actor's unchanged default is one app. The starter is capped at three apps and has no schedule.
+
+## CSV comparison guide
+
+1. Run the same known app IDs with `country: "us"` and check the `RUN_STATUS` outcome and saved count.
+2. Export the dataset as CSV with all fields. Keep `appId`, `country`, `appName`, `rating`, `ratingCount`, `version`, `currentVersionReleaseDate`, `price`, `currency`, `appStoreUrl` and `scrapedAt`.
+3. Save the first file as your baseline. On your chosen review date, collect another snapshot with the same IDs and storefront.
+4. Join the two files on **`appId` + `country`**, using IDs as text. App names and versions can change and are not stable join keys.
+5. Compare ratings in rating points, rating counts as a net count change, versions as text, and download prices only when both prices are present and currencies match.
+
+The Actor produces snapshots and run diagnostics. Persistent history, change alerts and a combined comparison report are assembled in your own spreadsheet or downstream workflow; this Actor does not generate them.
+
+Use the [field-by-field comparison guide](https://github.com/erenmyeager15/apple-app-store-scraper/blob/main/examples/US-IOS-COMPARISON-GUIDE.md) for rules on missing values, versions, free prices and incomplete runs.
 
 ## Quick Start
 
@@ -93,6 +137,8 @@ This record came from Apple's public lookup API for ChatGPT on August 2, 2026. S
 | `apify-actor-start` | `$0.00005` per GB, minimum one event |
 
 Apify Console shows the authoritative current price. Each validated record is saved and charged atomically.
+
+At the listed rate, three successfully saved apps cost `$0.006` in app events plus the start event (one `$0.00005` event at the current 512 MB default). This is the advertised result charge, not a new usage-cost or profitability measurement. The Actor's current pay-per-event model includes platform usage in the price.
 
 ## Reliability And Cost Controls
 
